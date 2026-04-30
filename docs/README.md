@@ -43,7 +43,7 @@ Features provided out of the box:
 
 1. [Copy this template](https://github.com/new?template_name=convex-saas&template_owner=get-convex)
 2. Clone the repo
-3. Install dependencies and set up a new Convex project:
+3. Install dependencies and set up a new Convex project. Examples use `npm`; `pnpm` and `yarn` work identically — substitute as you prefer.
 
 ```sh
 # install dependencies
