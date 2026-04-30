@@ -4,13 +4,15 @@ import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
+  {
+    ignores: ["dist/**", "convex/_generated/**", ".eslintrc.cjs"],
+  },
   eslint.configs.recommended,
   ...tseslint.configs.strict,
   {
     languageOptions: {
       globals: { browser: true, es2020: true },
     },
-    ignores: ["./dist/", ".eslintrc.cjs", "./convex/_generated/server.js"],
     plugins: {
       "react-refresh": reactRefresh,
     },
