@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Upload } from "lucide-react";
-import { useUploadFiles } from "@xixixao/uploadstuff/react";
 import { useDoubleCheck } from "@/ui/use-double-check";
 import { Input } from "@/ui/input";
 import { Button } from "@/ui/button";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { api } from "~/convex/_generated/api";
+import type { Id } from "~/convex/_generated/dataModel";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRef } from "react";
 import { useForm } from "@tanstack/react-form";
@@ -40,17 +40,22 @@ export default function DashboardSettings() {
   });
   const generateUploadUrl = useConvexMutation(api.app.generateUploadUrl);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { startUpload } = useUploadFiles(generateUploadUrl, {
-    onUploadComplete: async (uploaded) => {
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-      await updateUserImage({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        imageId: (uploaded[0].response as any).storageId,
-      });
-    },
-  });
+
+  const uploadAvatar = async (file: File) => {
+    const url = await generateUploadUrl({});
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": file.type },
+      body: file,
+    });
+    const { storageId } = (await response.json()) as {
+      storageId: Id<"_storage">;
+    };
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    await updateUserImage({ imageId: storageId });
+  };
   const { doubleCheck, getButtonProps } = useDoubleCheck();
 
   const usernameForm = useForm({
@@ -115,7 +120,7 @@ export default function DashboardSettings() {
               if (files.length === 0) {
                 return;
               }
-              startUpload(files);
+              await uploadAvatar(files[0]);
             }}
           />
         </div>
