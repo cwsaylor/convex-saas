@@ -39,7 +39,7 @@ async function getStripeEvent(request: Request) {
     return event;
   } catch (err: unknown) {
     console.log(err);
-    throw new Error(ERRORS.STRIPE_SOMETHING_WENT_WRONG);
+    throw new Error(ERRORS.STRIPE_SOMETHING_WENT_WRONG, { cause: err });
   }
 }
 
