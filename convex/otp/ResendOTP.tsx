@@ -1,4 +1,5 @@
 import { Email } from "@convex-dev/auth/providers/Email";
+import { render } from "@react-email/render";
 import { alphabet, generateRandomString } from "oslo/crypto";
 import { Resend as ResendAPI } from "resend";
 import { VerificationCodeEmail } from "./VerificationCodeEmail";
@@ -18,13 +19,16 @@ export const ResendOTP = Email({
     expires,
   }) {
     const resend = new ResendAPI(provider.apiKey);
+    const html = await render(
+      <VerificationCodeEmail code={token} expires={expires} />,
+    );
     const { error } = await resend.emails.send({
       // TODO: Update with your app name and email address
       from: AUTH_EMAIL ?? "Convex SaaS <onboarding@resend.dev>",
       to: [email],
       // TODO: Update with your app name
       subject: `Sign in to Convex SaaS`,
-      react: VerificationCodeEmail({ code: token, expires }),
+      html,
     });
 
     if (error) {
