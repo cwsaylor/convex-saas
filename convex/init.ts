@@ -1,4 +1,5 @@
 import { asyncMap } from "convex-helpers";
+import type { RegisteredAction } from "convex/server";
 import { ERRORS } from "~/errors";
 import { internalAction, internalMutation } from "@cvx/_generated/server";
 import schema, {
@@ -58,7 +59,11 @@ export const insertSeedPlan = internalMutation({
   },
 });
 
-export default internalAction(async (ctx) => {
+const seed: RegisteredAction<
+  "internal",
+  Record<string, never>,
+  Promise<void>
+> = internalAction(async (ctx) => {
   /**
    * Stripe Products.
    */
@@ -168,3 +173,5 @@ export default internalAction(async (ctx) => {
     "🎉 Visit: https://dashboard.stripe.com/test/products to see your products.",
   );
 });
+
+export default seed;
